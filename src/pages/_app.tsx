@@ -2,6 +2,11 @@ import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 
+import '@fontsource/roboto/300.css'
+import '@fontsource/roboto/400.css'
+import '@fontsource/roboto/500.css'
+import '@fontsource/roboto/700.css'
+
 const theme = createTheme({
   palette: {
     mode: 'dark',
@@ -10,9 +15,29 @@ const theme = createTheme({
       paper: 'rgb(0, 30, 60)',
     },
   },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          backgroundColor: 'rgb(10, 25, 41)',
+          border: '2px solid rgba(194, 224, 255, 0.08)',
+          color: '#B2BAC2',
+          fontWeight: 400,
+          textTransform: 'none',
 
+          '&:hover': {
+            color: 'white',
+            backgroundColor: 'rgb(0, 30, 60)',
+          },
+        },
+      },
+      defaultProps: {
+        variant: 'contained',
+      },
+    },
+  },
   shape: {
-    borderRadius: 20,
+    borderRadius: 10,
   },
 })
 

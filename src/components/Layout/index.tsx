@@ -15,8 +15,6 @@ import ListItem from '@mui/material/ListItem'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
-import InboxIcon from '@mui/icons-material/MoveToInbox'
-import MailIcon from '@mui/icons-material/Mail'
 import content from '@/components/Layout/layoutContent'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -87,7 +85,14 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar position='fixed' open={open}>
+      <AppBar
+        position='fixed'
+        sx={{
+          backgroundImage: 'rgb(10, 25, 41) !important',
+          boxShadow: 'none',
+        }}
+        open={open}
+      >
         <Toolbar>
           <IconButton
             color='inherit'
@@ -133,10 +138,11 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                   router.asPath === item.link
                     ? {
                         bgcolor: theme.palette.background.default,
-                        border: '1px solid #fafafa',
+                        border: '2px solid rgba(194, 224, 255, 0.08)',
                         borderRadius: '4px',
                       }
                     : {
+                        border: '2px solid transparent',
                         borderRadius: '4px',
                       }
                 }

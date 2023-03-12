@@ -1,9 +1,25 @@
 import Container from '@/components/Container'
 import Controls from '@/components/Controls'
+import GenerateButton from '@/components/GenerateButton'
 import Layout from '@/components/Layout'
+import { useText2imgMutation } from '@/services/baseApi'
+import { startTxt2ImageParams } from '@/services/static'
+import { Txt2ImageParams } from '@/types'
 import { Button, Grid, Paper, TextareaAutosize } from '@mui/material'
+import { useState } from 'react'
 
 const Home = () => {
+  const [params, setParams] = useState<Txt2ImageParams>(startTxt2ImageParams)
+  const [create, event] = useText2imgMutation()
+
+  const onParamsChange = (params: Txt2ImageParams) => {
+    setParams((oldParams) => ({ ...oldParams, ...params }))
+  }
+
+  const onGenerateClick = () => {
+    create(params)
+  }
+
   return (
     <Layout>
       <Container>
@@ -13,25 +29,23 @@ const Home = () => {
               variant='outlined'
               sx={{ width: '100%', height: '100%', p: 2 }}
             >
-              <img src='' alt='image' width={'100%'} height={'100%'} />
+              <img
+                src={`data:image/png;base64,${event.data}`}
+                alt='image'
+                style={{
+                  maxHeight: '100%',
+                  maxWidth: '100%',
+                }}
+              />
             </Paper>
           </Grid>
           <Grid item xs={6}>
             <Grid container spacing={2} sx={{ flexDirection: 'column' }}>
               <Grid item>
-                <Button
-                  fullWidth
-                  sx={{
-                    p: 4,
-                    fontWeight: 400,
-                    color: 'white',
-                    border: 'none',
-                    background:
-                      'linear-gradient(90deg, rgba(131,58,180,1) 0%, rgba(157,31,48,1) 50%, rgba(252,176,69,1) 100%)',
-                  }}
-                >
-                  Generate
-                </Button>
+                <GenerateButton
+                  loading={event.isLoading}
+                  onClick={onGenerateClick}
+                />
               </Grid>
               <Grid item>
                 <Button fullWidth>Save</Button>
@@ -65,9 +79,11 @@ const Home = () => {
           </Grid>
         </Grid>
         <Grid container sx={{ my: 2 }}>
-          <Grid item xs={12} sx={{}}>
+          <Grid item xs={12}>
             <TextareaAutosize
               minRows={5}
+              value={params.prompt}
+              onChange={(e) => onParamsChange({ prompt: e.target.value })}
               placeholder='Prompt...'
               style={{ width: '100%' }}
             />
@@ -75,12 +91,16 @@ const Home = () => {
           <Grid item xs={12}>
             <TextareaAutosize
               minRows={5}
+              value={params.negative_prompt}
+              onChange={(e) =>
+                onParamsChange({ negative_prompt: e.target.value })
+              }
               placeholder='Negative prompt...'
               style={{ width: '100%' }}
             />
           </Grid>
         </Grid>
-        <Controls />
+        <Controls params={params} onParamsChange={onParamsChange} />
       </Container>
     </Layout>
   )

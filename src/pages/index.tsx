@@ -5,12 +5,28 @@ import Layout from '@/components/Layout'
 import { useText2imgMutation } from '@/services/baseApi'
 import { startTxt2ImageParams } from '@/services/static'
 import { Txt2ImageParams } from '@/types'
+import { b64toBlob } from '@/utils'
 import { Button, Grid, Paper, TextareaAutosize } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { saveAs } from 'file-saver'
+
+const getSavedImageString = () => localStorage.getItem('image')
 
 const Home = () => {
+  const [savedImage, setSavedImage] = useState<null | string>(null)
   const [params, setParams] = useState<Txt2ImageParams>(startTxt2ImageParams)
   const [create, event] = useText2imgMutation()
+
+  useEffect(() => {
+    setSavedImage(getSavedImageString())
+  }, [])
+
+  useEffect(() => {
+    if (event.data) {
+      localStorage.setItem('image', event.data)
+      setSavedImage(event.data as string)
+    }
+  }, [event.data])
 
   const onParamsChange = (params: Txt2ImageParams) => {
     setParams((oldParams) => ({ ...oldParams, ...params }))
@@ -18,6 +34,13 @@ const Home = () => {
 
   const onGenerateClick = () => {
     create(params)
+  }
+
+  const saveImage = () => {
+    if (savedImage) {
+      const blob = b64toBlob(savedImage)
+      saveAs(blob, 'image.png')
+    }
   }
 
   return (
@@ -30,7 +53,7 @@ const Home = () => {
               sx={{ width: '100%', height: '100%', p: 2 }}
             >
               <img
-                src={`data:image/png;base64,${event.data}`}
+                src={`data:image/png;base64,${savedImage}`}
                 alt='image'
                 style={{
                   maxHeight: '100%',
@@ -48,7 +71,9 @@ const Home = () => {
                 />
               </Grid>
               <Grid item>
-                <Button fullWidth>Save</Button>
+                <Button onClick={saveImage} fullWidth>
+                  Save
+                </Button>
               </Grid>
             </Grid>
             <Grid
